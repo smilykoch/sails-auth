@@ -1,7 +1,8 @@
 # sails-auth
 
-[![Looking for maintainers][hacktober-image]][hacktober-url]
+### Ready for SailsJS v1.0
 
+*This repo is forked from langateam/sails-auth*
 
 [![NPM version][npm-image]][npm-url]
 [![Build status][travis-image]][travis-url]
@@ -64,7 +65,7 @@ For comprehensive user account control with role-based permissioning, object own
 ## License
 MIT
 
-## Maintained By
+## Original Fork is Maintained By
 [<img src='http://i.imgur.com/Y03Jgmf.png' height='64px'>](http://langa.io)
 - [Travis Webb](https://github.com/tjwebb)
 - [Ryan Quinn](https://github.com/ryanwilliamquinn)

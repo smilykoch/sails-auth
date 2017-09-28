@@ -66,7 +66,7 @@ if (sails.services.passport) {
    * @param {Object}   profile
    * @param {Function} next
    */
-  passport.connect = function (req, query, profile, next) {
+  passport.connect = function(req, query, profile, next) {
     var user = {};
 
     // Use profile.provider or fallback to the query.provider if it is undefined
@@ -107,20 +107,20 @@ if (sails.services.passport) {
         provider: provider,
         identifier: query.identifier.toString()
       })
-      .then(function (passport) {
+      .then(function(passport) {
         if (!req.user) {
           // Scenario: A new user is attempting to sign up using a third-party
           //           authentication provider.
           // Action:   Create a new user and assign them a passport.
           if (!passport) {
             return sails.models.user.create(user)
-              .then(function (_user) {
+              .then(function(_user) {
                 user = _user;
                 return sails.models.passport.create(_.extend({
                   user: user.id
                 }, query));
               })
-              .then(function (passport) {
+              .then(function(passport) {
                 next(null, user);
               })
               .catch(next);
@@ -137,12 +137,12 @@ if (sails.services.passport) {
 
             // Save any updates to the Passport before moving on
             return passport.save()
-              .then(function () {
+              .then(function() {
 
                 // Fetch the user associated with the Passport
                 return sails.models.user.findOne(passport.user);
               })
-              .then(function (user) {
+              .then(function(user) {
                 next(null, user);
               })
               .catch(next);
@@ -155,7 +155,7 @@ if (sails.services.passport) {
             return sails.models.passport.create(_.extend({
                 user: req.user.id
               }, query))
-              .then(function (passport) {
+              .then(function(passport) {
                 next(null, req.user);
               })
               .catch(next);
@@ -179,7 +179,7 @@ if (sails.services.passport) {
    * @param  {Object} req
    * @param  {Object} res
    */
-  passport.endpoint = function (req, res) {
+  passport.endpoint = function(req, res) {
     var strategies = sails.config.passport;
     var provider = req.param('provider');
     var options = {};
@@ -211,7 +211,7 @@ if (sails.services.passport) {
    * @param {Object}   res
    * @param {Function} next
    */
-  passport.callback = function (req, res, next) {
+  passport.callback = function(req, res, next) {
     var provider = req.param('provider', 'local');
     var action = req.param('action');
 
@@ -261,10 +261,10 @@ if (sails.services.passport) {
    * http://passportjs.org/guide/providers/
    *
    */
-  passport.loadStrategies = function () {
+  passport.loadStrategies = function() {
     var strategies = sails.config.passport;
 
-    _.each(strategies, _.bind(function (strategy, key) {
+    _.each(strategies, _.bind(function(strategy, key) {
       var options = {
         passReqToCallback: true
       };
@@ -298,7 +298,7 @@ if (sails.services.passport) {
           baseUrl = sails.config.appUrl;
         } else {
           sails.log.warn('Please add "appUrl" configuration value.');
-          baseUrl = sails.getBaseurl();
+          baseUrl = sails.getBaseUrl();
         }
 
         switch (protocol) {
@@ -330,7 +330,7 @@ if (sails.services.passport) {
    * @param  {Object} req
    * @param  {Object} res
    */
-  passport.disconnect = function (req, res, next) {
+  passport.disconnect = function(req, res, next) {
     var user = req.user;
     var provider = req.param('provider');
 
@@ -338,23 +338,23 @@ if (sails.services.passport) {
         provider: provider,
         user: user.id
       })
-      .then(function (passport) {
+      .then(function(passport) {
         return sails.models.passport.destroy(passport.id);
       })
-      .then(function (error) {
+      .then(function(error) {
         next(null, user);
         return user;
       })
       .catch(next);
   };
 
-  passport.serializeUser(function (user, next) {
+  passport.serializeUser(function(user, next) {
     next(null, user.id);
   });
 
-  passport.deserializeUser(function (id, next) {
+  passport.deserializeUser(function(id, next) {
     return sails.models.user.findOne(id)
-      .then(function (user) {
+      .then(function(user) {
         next(null, user || null);
         return user;
       })
