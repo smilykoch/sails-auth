@@ -12,7 +12,7 @@
 
 ## 1. Install
 ```sh
-$ npm install sails-auth --save
+$ npm install sails-auth-new --save
 ```
 This will install `sails-auth` as a Sails Hook. The Hook uses
 [marlinspike](https://github.com/tjwebb/marlinspike) to inject the relevant
