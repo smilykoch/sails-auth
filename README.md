@@ -20,21 +20,27 @@ Controllers, Policies, etc into your Sails application.
 
 ## 2. Configure
 
-#### `config/passport.js`
+#### `config/custom.js`
 
 By default, the `local` and `basic` strategies are enabled. See
-[config/passport.js](https://github.com/langateam/sails-auth/blob/master/config/passport.js)
+[config/custom.js](https://github.com/dominicrico/sails-auth/blob/master/config/custom.js)
 for examples of how to add and configure additional authentication strategies.
 
-#### `config/auth.js`
+Also set the bcrypt config for salt rounds here and the appUrl.
 
 ```js
+  appUrl: 'localhost:1337', //for development
   bcrypt: {
     /**
      * Specifiy number of salt rounds to perform on password. Values >10 are
      * slow.
      */
     rounds: 8
+  },
+  paspport: {
+    /**
+     * Strategies go here
+     */
   }
 ```
 

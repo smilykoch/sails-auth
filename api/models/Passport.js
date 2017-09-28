@@ -6,11 +6,11 @@ var bcrypt = require('bcryptjs');
  * @param {Object}   password
  * @param {Function} next
  */
-function hashPassword (passport, next) {
-  var config = sails.config.auth.bcrypt;
+function hashPassword(passport, next) {
+  var config = sails.config.custom.bcrypt;
   var salt = config.salt || config.rounds;
   if (passport.password) {
-    bcrypt.hash(passport.password, salt, function (err, hash) {
+    bcrypt.hash(passport.password, salt, function(err, hash) {
       if (err) {
         delete passport.password;
         sails.log.error(err);
@@ -19,8 +19,7 @@ function hashPassword (passport, next) {
       passport.password = hash;
       next(null, passport);
     });
-  }
-  else {
+  } else {
     next(null, passport);
   }
 }
@@ -40,23 +39,39 @@ function hashPassword (passport, next) {
  * the user, but not the authentication data, to and from the session.
  */
 var Passport = {
+  primaryKey: '_id',
+
   attributes: {
+
+    _id: {
+      type: 'string',
+      unique: true,
+      columnName: '_id'
+    },
     // Required field: Protocol
     //
     // Defines the protocol to use for the passport. When employing the local
     // strategy, the protocol will be set to 'local'. When using a third-party
     // strategy, the protocol will be set to the standard used by the third-
     // party service (e.g. 'oauth', 'oauth2', 'openid').
-    protocol: { type: 'alphanumeric', required: true },
+    protocol: {
+      type: 'alphanumeric',
+      required: true
+    },
 
     // Local field: Password
     //
     // When the local strategy is employed, a password will be used as the
     // means of authentication along with either a username or an email.
-    password: { type: 'string', minLength: 8 },
+    password: {
+      type: 'string',
+      minLength: 8
+    },
     // accessToken is used to authenticate API requests. it is generated when a
     // passport (with protocol 'local') is created for a user.
-    accessToken: { type: 'string' },
+    accessToken: {
+      type: 'string'
+    },
 
     // Provider fields: Provider, identifer and tokens
     //
@@ -69,9 +84,15 @@ var Passport = {
     // dards. When using OAuth 1.0, a `token` as well as a `tokenSecret` will
     // be issued by the provider. In the case of OAuth 2.0, an `accessToken`
     // and a `refreshToken` will be issued.
-    provider   : { type: 'alphanumericdashed' },
-    identifier : { type: 'string' },
-    tokens     : { type: 'json' },
+    provider: {
+      type: 'alphanumericdashed'
+    },
+    identifier: {
+      type: 'string'
+    },
+    tokens: {
+      type: 'json'
+    },
 
     // Associations
     //
@@ -80,7 +101,10 @@ var Passport = {
     //
     // For more information on associations in Waterline, check out:
     // https://github.com/balderdashy/waterline
-    user: { model: 'User', required: true },
+    user: {
+      model: 'User',
+      required: true
+    },
 
     /**
      * Validate password used by the local strategy.
@@ -88,7 +112,7 @@ var Passport = {
      * @param {string}   password The password to validate
      * @param {Function} next
      */
-    validatePassword: function (password, next) {
+    validatePassword: function(password, next) {
       bcrypt.compare(password, this.password, next);
     }
 
@@ -100,7 +124,7 @@ var Passport = {
    * @param {Object}   passport The soon-to-be-created Passport
    * @param {Function} next
    */
-  beforeCreate: function (passport, next) {
+  beforeCreate: function(passport, next) {
     hashPassword(passport, next);
   },
 
@@ -110,7 +134,7 @@ var Passport = {
    * @param {Object}   passport Values to be updated
    * @param {Function} next
    */
-  beforeUpdate: function (passport, next) {
+  beforeUpdate: function(passport, next) {
     hashPassword(passport, next);
   }
 };

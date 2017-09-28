@@ -180,7 +180,7 @@ if (sails.services.passport) {
    * @param  {Object} res
    */
   passport.endpoint = function(req, res) {
-    var strategies = sails.config.passport;
+    var strategies = sails.config.custom.passport;
     var provider = req.param('provider');
     var options = {};
 
@@ -262,7 +262,7 @@ if (sails.services.passport) {
    *
    */
   passport.loadStrategies = function() {
-    var strategies = sails.config.passport;
+    var strategies = sails.config.custom.passport;
 
     _.each(strategies, _.bind(function(strategy, key) {
       var options = {
@@ -295,10 +295,10 @@ if (sails.services.passport) {
 
         var baseUrl = '';
         if (sails.config.appUrl && sails.config.appUrl !== null) {
+          sails.log.warn('Please add "appUrl" to custom configuration in config/custom.js');
           baseUrl = sails.config.appUrl;
         } else {
-          sails.log.warn('Please add "appUrl" configuration value.');
-          baseUrl = sails.getBaseUrl();
+          baseUrl = sails.config.custom.appUrl;
         }
 
         switch (protocol) {

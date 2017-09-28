@@ -3,7 +3,16 @@ var crypto = require('crypto');
 
 /** @module User */
 module.exports = {
+  primaryKey: '_id',
+
   attributes: {
+
+    _id: {
+      type: 'string',
+      unique: true,
+      columnName: '_id'
+    },
+
     username: {
       type: 'string',
       unique: true,
@@ -20,13 +29,13 @@ module.exports = {
       via: 'user'
     },
 
-    getGravatarUrl: function () {
+    getGravatarUrl: function() {
       var md5 = crypto.createHash('md5');
       md5.update(this.email || '');
-      return 'https://gravatar.com/avatar/'+ md5.digest('hex');
+      return 'https://gravatar.com/avatar/' + md5.digest('hex');
     },
 
-    toJSON: function () {
+    toJSON: function() {
       var user = this.toObject();
       delete user.password;
       user.gravatarUrl = this.getGravatarUrl();
@@ -34,7 +43,7 @@ module.exports = {
     }
   },
 
-  beforeCreate: function (user, next) {
+  beforeCreate: function(user, next) {
     if (_.isEmpty(user.username)) {
       user.username = user.email;
     }
@@ -44,9 +53,9 @@ module.exports = {
   /**
    * Register a new User with a passport
    */
-  register: function (user) {
-    return new Promise(function (resolve, reject) {
-      sails.services.passport.protocols.local.createUser(user, function (error, created) {
+  register: function(user) {
+    return new Promise(function(resolve, reject) {
+      sails.services.passport.protocols.local.createUser(user, function(error, created) {
         if (error) return reject(error);
 
         resolve(created);
