@@ -339,7 +339,7 @@ if (sails.services.passport) {
         user: user._id
       })
       .then(function(passport) {
-        return sails.models.passport.destroy(passport.id);
+        return sails.models.passport.destroy(passport._id);
       })
       .then(function(error) {
         next(null, user);

@@ -5,14 +5,16 @@ module.exports.custom = {
     rounds: 8
   },
 
-  local: {
-    strategy: require('passport-local').Strategy
-  },
+  passport: {
+    local: {
+      strategy: require('passport-local').Strategy
+    },
 
-  basic: {
-    strategy: require('passport-http').BasicStrategy,
-    protocol: 'basic'
-  },
+    basic: {
+      strategy: require('passport-http').BasicStrategy,
+      protocol: 'basic'
+    }
+  }
 
   /*
   bearer: {

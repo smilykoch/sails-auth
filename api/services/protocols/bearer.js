@@ -9,7 +9,7 @@
  */
 
 module.exports = function(req, token, done) {
-
+  console.log('BEARER STUFFFFFFF')
   sails.models.passport.findOne({
     accessToken: token
   }).exec(function(err, passport) {
