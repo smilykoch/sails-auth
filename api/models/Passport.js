@@ -55,7 +55,7 @@ var Passport = {
     // strategy, the protocol will be set to the standard used by the third-
     // party service (e.g. 'oauth', 'oauth2', 'openid').
     protocol: {
-      type: 'alphanumeric',
+      type: 'string',
       required: true
     },
 
@@ -85,7 +85,7 @@ var Passport = {
     // be issued by the provider. In the case of OAuth 2.0, an `accessToken`
     // and a `refreshToken` will be issued.
     provider: {
-      type: 'alphanumericdashed'
+      type: 'string'
     },
     identifier: {
       type: 'string'
@@ -104,18 +104,18 @@ var Passport = {
     user: {
       model: 'User',
       required: true
-    },
-
-    /**
-     * Validate password used by the local strategy.
-     *
-     * @param {string}   password The password to validate
-     * @param {Function} next
-     */
-    validatePassword: function(password, next) {
-      bcrypt.compare(password, this.password, next);
     }
 
+  },
+
+  /**
+   * Validate password used by the local strategy.
+   *
+   * @param {string}   password The password to validate
+   * @param {Function} next
+   */
+  validatePassword: function(password, next) {
+    bcrypt.compare(password, this.password, next);
   },
 
   /**

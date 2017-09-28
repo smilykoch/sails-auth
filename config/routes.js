@@ -1,14 +1,54 @@
 module.exports.routes = {
-  'post /register': 'UserController.create',
-  'post /logout': 'AuthController.logout',
+  'post /register': {
+    controller: 'UserController',
+    action: 'create',
+    skipAssets: true
+  },
 
-  'post /auth/local': 'AuthController.callback',
-  'post /auth/local/:action': 'AuthController.callback',
+  'post /logout': {
+    controller: 'AuthController',
+    skipAssets: true,
+    action: 'logout'
+  },
 
-  'post /auth/:provider': 'AuthController.callback',
-  'post /auth/:provider/:action': 'AuthController.callback',
+  'post /auth/local': {
+    controller: 'AuthController',
+    skipAssets: true,
+    action: 'callback'
+  },
 
-  'get /auth/:provider': 'AuthController.provider',
-  'get /auth/:provider/callback': 'AuthController.callback',
-  'get /auth/:provider/:action': 'AuthController.callback'
+  'post /auth/local/:action': {
+    controller: 'AuthController',
+    skipAssets: true,
+    action: 'callback'
+  },
+
+  'post /auth/:provider': {
+    controller: 'AuthController',
+    skipAssets: true,
+    action: 'callback'
+  },
+
+  'post /auth/:provider/:action': {
+    controller: 'AuthController',
+    skipAssets: true,
+    action: 'callback'
+  },
+
+  'get /auth/:provider': {
+    controller: 'AuthController',
+    skipAssets: true,
+    action: 'provider'
+  },
+
+  'get /auth/:provider/callback': {
+    controller: 'AuthController',
+    skipAssets: true,
+    action: 'callback'
+  },
+  'get /auth/:provider/:action': {
+    controller: 'AuthController',
+    skipAssets: true,
+    action: 'callback'
+  },
 };

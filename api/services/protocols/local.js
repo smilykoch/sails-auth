@@ -19,11 +19,11 @@ var SAError = require('../../../lib/error/SAError.js');
  * @param {Object}   res
  * @param {Function} next
  */
-exports.register = function (user, next) {
+exports.register = function(user, next) {
   exports.createUser(user, next);
 };
 
-exports.update = function (user, next) {
+exports.update = function(user, next) {
   exports.updateUser(user, next);
 };
 
@@ -38,34 +38,38 @@ exports.update = function (user, next) {
  * @param {String}   password
  * @param {Function} next
  */
-exports.createUser = function (_user, next) {
+exports.createUser = function(_user, next) {
   var accessToken = generateToken();
   var password = _user.password;
   delete _user.password;
 
-  return sails.models.user.create(_user, function (err, user) {
+  return sails.models.user.create(_user, function(err, user) {
     if (err) {
       sails.log(err);
 
       if (err.code === 'E_VALIDATION') {
-        return next(new SAError({originalError: err}));
+        return next(new SAError({
+          originalError: err
+        }));
       }
-      
+
       return next(err);
     }
 
     sails.models.passport.create({
-      protocol : 'local'
-    , password : password
-    , user     : user.id
-    , accessToken: accessToken
-    }, function (err, passport) {
+      protocol: 'local',
+      password: password,
+      user: user.id,
+      accessToken: accessToken
+    }, function(err, passport) {
       if (err) {
         if (err.code === 'E_VALIDATION') {
-          err = new SAError({originalError: err});
+          err = new SAError({
+            originalError: err
+          });
         }
-        
-        return user.destroy(function (destroyErr) {
+
+        return user.destroy(function(destroyErr) {
           next(destroyErr || err);
         });
       }
@@ -86,18 +90,24 @@ exports.createUser = function (_user, next) {
  * @param {String}   password
  * @param {Function} next
  */
-exports.updateUser = function (_user, next) {
+exports.updateUser = function(_user, next) {
   var password = _user.password;
   delete _user.password;
 
-  var userFinder = _user.hasOwnProperty('id') ? { id: _user.id } : { username: _user.username };
+  var userFinder = _user.hasOwnProperty('id') ? {
+    _id: _user.id
+  } : {
+    username: _user.username
+  };
 
-  return sails.models.user.update(userFinder, _user, function (err, user) {
+  return sails.models.user.update(userFinder, _user, function(err, user) {
     if (err) {
       sails.log(err);
 
       if (err.code === 'E_VALIDATION') {
-        return next(new SAError({ originalError: err }));
+        return next(new SAError({
+          originalError: err
+        }));
       }
 
       return next(err);
@@ -107,14 +117,16 @@ exports.updateUser = function (_user, next) {
     // Check if password has a string to replace it
     if (!!password) {
       sails.models.passport.findOne({
-        protocol : 'local'
-        ,user:user.id
-      }, function(err, passport){
+        protocol: 'local',
+        user: user.id
+      }, function(err, passport) {
         passport.password = password;
-        passport.save(function (err, passport) {
+        passport.save(function(err, passport) {
           if (err) {
             if (err.code === 'E_VALIDATION') {
-              err = new SAError({ originalError: err });
+              err = new SAError({
+                originalError: err
+              });
             }
 
             next(err);
@@ -141,29 +153,28 @@ exports.updateUser = function (_user, next) {
  * @param {Object}   res
  * @param {Function} next
  */
-exports.connect = function (req, res, next) {
-  var user     = req.user
-    , password = req.param('password')
-    , Passport = sails.models.passport;
+exports.connect = function(req, res, next) {
+  var user = req.user,
+    password = req.param('password'),
+    Passport = sails.models.passport;
 
   Passport.findOne({
-    protocol : 'local'
-  , user     : user.id
-  }, function (err, passport) {
+    protocol: 'local',
+    user: user.id
+  }, function(err, passport) {
     if (err) {
       return next(err);
     }
 
     if (!passport) {
       Passport.create({
-        protocol : 'local'
-      , password : password
-      , user     : user.id
-      }, function (err, passport) {
+        protocol: 'local',
+        password: password,
+        user: user.id
+      }, function(err, passport) {
         next(err, user);
       });
-    }
-    else {
+    } else {
       next(null, user);
     }
   });
@@ -181,18 +192,17 @@ exports.connect = function (req, res, next) {
  * @param {string}   password
  * @param {Function} next
  */
-exports.login = function (req, identifier, password, next) {
-  var isEmail = validateEmail(identifier)
-    , query   = {};
+exports.login = function(req, identifier, password, next) {
+  var isEmail = validateEmail(identifier),
+    query = {};
 
   if (isEmail) {
     query.email = identifier;
-  }
-  else {
+  } else {
     query.username = identifier;
   }
 
-  sails.models.user.findOne(query, function (err, user) {
+  sails.models.user.findOne(query, function(err, user) {
     if (err) {
       return next(err);
     }
@@ -208,11 +218,11 @@ exports.login = function (req, identifier, password, next) {
     }
 
     sails.models.passport.findOne({
-      protocol : 'local'
-    , user     : user.id
-    }, function (err, passport) {
+      protocol: 'local',
+      user: user._id
+    }, function(err, passport) {
       if (passport) {
-        passport.validatePassword(password, function (err, res) {
+        Passport.validatePassword(password, passport.password, function(err, res) {
           if (err) {
             return next(err);
           }
@@ -224,8 +234,7 @@ exports.login = function (req, identifier, password, next) {
             return next(null, user, passport);
           }
         });
-      }
-      else {
+      } else {
         req.flash('error', 'Error.Passport.Password.NotSet');
         return next(null, false);
       }
@@ -233,7 +242,8 @@ exports.login = function (req, identifier, password, next) {
   });
 };
 
-var EMAIL_REGEX = /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))$/i;
+var EMAIL_REGEX =
+  /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))$/i;
 
 /**
  * Use validator module isEmail function
@@ -241,7 +251,7 @@ var EMAIL_REGEX = /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF9
  * @see <https://github.com/chriso/validator.js/blob/3.18.0/validator.js#L38>
  * @see <https://github.com/chriso/validator.js/blob/3.18.0/validator.js#L141-L143>
  */
-function validateEmail (str) {
+function validateEmail(str) {
   return EMAIL_REGEX.test(str);
 }
 

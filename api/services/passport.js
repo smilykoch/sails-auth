@@ -117,7 +117,7 @@ if (sails.services.passport) {
               .then(function(_user) {
                 user = _user;
                 return sails.models.passport.create(_.extend({
-                  user: user.id
+                  user: user._id
                 }, query));
               })
               .then(function(passport) {
@@ -153,7 +153,7 @@ if (sails.services.passport) {
           // Action:   Create and assign a new passport to the user.
           if (!passport) {
             return sails.models.passport.create(_.extend({
-                user: req.user.id
+                user: req.user._id
               }, query))
               .then(function(passport) {
                 next(null, req.user);
@@ -336,7 +336,7 @@ if (sails.services.passport) {
 
     return sails.models.passport.findOne({
         provider: provider,
-        user: user.id
+        user: user._id
       })
       .then(function(passport) {
         return sails.models.passport.destroy(passport.id);
@@ -349,7 +349,7 @@ if (sails.services.passport) {
   };
 
   passport.serializeUser(function(user, next) {
-    next(null, user.id);
+    next(null, user._id);
   });
 
   passport.deserializeUser(function(id, next) {

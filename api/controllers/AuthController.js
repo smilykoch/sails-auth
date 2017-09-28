@@ -17,7 +17,7 @@ module.exports = {
    * @param {Object} req
    * @param {Object} res
    */
-  logout: function (req, res) {
+  logout: function(req, res) {
     req.logout();
     delete req.user;
     delete req.session.passport;
@@ -25,8 +25,7 @@ module.exports = {
 
     if (!req.isSocket) {
       res.redirect(req.query.next || '/');
-    }
-    else {
+    } else {
       res.ok();
     }
   },
@@ -37,7 +36,7 @@ module.exports = {
    * @param {Object} req
    * @param {Object} res
    */
-  provider: function (req, res) {
+  provider: function(req, res) {
     sails.services.passport.endpoint(req, res);
   },
 
@@ -57,36 +56,33 @@ module.exports = {
    * @param {Object} req
    * @param {Object} res
    */
-  callback: function (req, res) {
+  callback: function(req, res) {
     var action = req.param('action');
 
-    function negotiateError (err) {
+    function negotiateError(err) {
       if (action === 'register') {
         res.redirect('/register');
-      }
-      else if (action === 'login') {
+      } else if (action === 'login') {
         res.redirect('/login');
-      }
-      else if (action === 'disconnect') {
+      } else if (action === 'disconnect') {
         res.redirect('back');
-      }
-      else {
+      } else {
         // make sure the server always returns a response to the client
         // i.e passport-local bad username/email or password
-        res.send(403, err);
+        res.status(403).send(err);
       }
     }
 
-    sails.services.passport.callback(req, res, function (err, user, info, status) {
+    sails.services.passport.callback(req, res, function(err, user, info, status) {
       if (err || !user) {
         sails.log.warn(user, err, info, status);
-		  if(!err && info) {
-			  return negotiateError(info);
-		  }
+        if (!err && info) {
+          return negotiateError(info);
+        }
         return negotiateError(err);
       }
 
-      req.login(user, function (err) {
+      req.login(user, function(err) {
         if (err) {
           sails.log.warn(err);
           return negotiateError(err);
@@ -113,7 +109,7 @@ module.exports = {
    * @param {Object} req
    * @param {Object} res
    */
-  disconnect: function (req, res) {
+  disconnect: function(req, res) {
     sails.services.passport.disconnect(req, res);
   }
 };

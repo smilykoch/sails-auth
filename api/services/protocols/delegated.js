@@ -15,7 +15,7 @@ var _ = require('lodash');
  * @param {Function} next
  */
 
-module.exports = function (req, userprofile, next) {
+module.exports = function(req, userprofile, next) {
 
 	//sails.log.debug('delegated: connecting user', util.inspect(userprofile));
 	//sails.log.debug('delegated: session is ', util.inspect(req.session));

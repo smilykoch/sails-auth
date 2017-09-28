@@ -13,6 +13,16 @@ if (!authHook) {
     configure() {
       sails.services.passport.loadStrategies()
     }
+
+    initialize(cb) {
+
+      sails.on('hook:orm:loaded', function() {
+        // Finish initializing custom hook
+        // Then call cb()
+        return cb();
+
+      });
+    }
   }
 
   authHook = Marlinspike.createSailsHook(Auth)
