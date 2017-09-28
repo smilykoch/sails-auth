@@ -43,7 +43,9 @@ exports.createUser = function(_user, next) {
   var password = _user.password;
   delete _user.password;
 
-  return sails.models.user.create(_user, function(err, user) {
+  return sails.models.user.create(_user).meta({
+    fetch: true
+  }).exec(function(err, user) {
     if (err) {
       sails.log(err);
 
@@ -61,7 +63,9 @@ exports.createUser = function(_user, next) {
       password: password,
       user: user.id,
       accessToken: accessToken
-    }, function(err, passport) {
+    }).meta({
+      fetch: true
+    }).exec(function(err, passport) {
       if (err) {
         if (err.code === 'E_VALIDATION') {
           err = new SAError({
@@ -100,7 +104,9 @@ exports.updateUser = function(_user, next) {
     username: _user.username
   };
 
-  return sails.models.user.update(userFinder, _user, function(err, user) {
+  return sails.models.user.update(userFinder, _user).meta({
+    fetch: true
+  }).exec(function(err, user) {
     if (err) {
       sails.log(err);
 
@@ -171,7 +177,9 @@ exports.connect = function(req, res, next) {
         protocol: 'local',
         password: password,
         user: user.id
-      }, function(err, passport) {
+      }).meta({
+        fetch: true
+      }).exec(function(err, passport) {
         next(err, user);
       });
     } else {
