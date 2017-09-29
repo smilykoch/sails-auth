@@ -114,8 +114,8 @@ var Passport = {
    * @param {string}   password The password to validate
    * @param {Function} next
    */
-  validatePassword: function(password, next) {
-    bcrypt.compare(password, this.password, next);
+  validatePassword: function(password, userPassword, next) {
+    bcrypt.compare(password, userPassword, next);
   },
 
   /**
