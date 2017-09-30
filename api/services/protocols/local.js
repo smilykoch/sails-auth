@@ -73,7 +73,7 @@ exports.createUser = function(_user, next) {
           });
         }
 
-        return user.destroy(function(destroyErr) {
+        return sails.models.user.destroy(user).exec(function(destroyErr) {
           next(destroyErr || err);
         });
       }
@@ -216,13 +216,14 @@ exports.login = function(req, identifier, password, next) {
     }
 
     if (!user) {
+      var userError = null;
       if (isEmail) {
-        req.flash('error', 'Error.Passport.Email.NotFound');
+        userError = 'Error.Passport.Email.NotFound';
       } else {
-        req.flash('error', 'Error.Passport.Username.NotFound');
+        userError = 'Error.Passport.Username.NotFound';
       }
 
-      return next(null, false);
+      return next(userError, false);
     }
 
     sails.models.passport.findOne({
@@ -236,15 +237,13 @@ exports.login = function(req, identifier, password, next) {
           }
 
           if (!res) {
-            req.flash('error', 'Error.Passport.Password.Wrong');
-            return next(null, false);
+            return next('Error.Passport.Password.Wrong', false);
           } else {
             return next(null, user, passport);
           }
         });
       } else {
-        req.flash('error', 'Error.Passport.Password.NotSet');
-        return next(null, false);
+        return next('Error.Passport.Password.NotSet', false);
       }
     });
   });
