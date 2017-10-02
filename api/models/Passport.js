@@ -39,15 +39,15 @@ function hashPassword(passport, next) {
  * the user, but not the authentication data, to and from the session.
  */
 var Passport = {
-  primaryKey: '_id',
+  // primaryKey: '_id',
 
   attributes: {
 
-    _id: {
-      type: 'string',
-      unique: true,
-      columnName: '_id'
-    },
+    // _id: {
+    //   type: 'string',
+    //   unique: true,
+    //   columnName: '_id'
+    // },
     // Required field: Protocol
     //
     // Defines the protocol to use for the passport. When employing the local

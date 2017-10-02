@@ -1,6 +1,6 @@
 # sails-auth
 
-### Ready for SailsJS v1.0
+### Sails-Auth ready for Sails.js v1.0
 
 *This repo is forked from langateam/sails-auth*
 

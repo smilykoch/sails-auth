@@ -117,7 +117,7 @@ if (sails.services.passport) {
               .then(function(_user) {
                 user = _user;
                 return sails.models.passport.create(_.extend({
-                  user: user._id
+                  user: user.id
                 }, query));
               })
               .then(function(passport) {
@@ -153,7 +153,7 @@ if (sails.services.passport) {
           // Action:   Create and assign a new passport to the user.
           if (!passport) {
             return sails.models.passport.create(_.extend({
-                user: req.user._id
+                user: req.user.id
               }, query))
               .then(function(passport) {
                 next(null, req.user);
@@ -252,7 +252,7 @@ if (sails.services.passport) {
         protocol: 'oauth2',
         scope: [ 'user', 'gist' ]
         options: {
-          clientID: 'CLIENT_ID',
+          clientID: 'CLIENTid',
           clientSecret: 'CLIENT_SECRET'
         }
       }
@@ -336,10 +336,10 @@ if (sails.services.passport) {
 
     return sails.models.passport.findOne({
         provider: provider,
-        user: user._id
+        user: user.id
       })
       .then(function(passport) {
-        return sails.models.passport.destroy(passport._id);
+        return sails.models.passport.destroy(passport.id);
       })
       .then(function(error) {
         next(null, user);
@@ -349,7 +349,7 @@ if (sails.services.passport) {
   };
 
   passport.serializeUser(function(user, next) {
-    next(null, user._id);
+    next(null, user.id);
   });
 
   passport.deserializeUser(function(id, next) {

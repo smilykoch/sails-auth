@@ -9,7 +9,6 @@
  */
 
 module.exports = function(req, token, done) {
-  console.log('BEARER STUFFFFFFF')
   sails.models.passport.findOne({
     accessToken: token
   }).exec(function(err, passport) {
@@ -22,7 +21,7 @@ module.exports = function(req, token, done) {
     }
 
     sails.models.user.findOne({
-      _id: passport.user
+      id: passport.user
     }).exec(function(err, user) {
       if (err) {
         return done(err);

@@ -61,7 +61,7 @@ exports.createUser = function(_user, next) {
     sails.models.passport.create({
       protocol: 'local',
       password: password,
-      user: user._id,
+      user: user.id,
       accessToken: accessToken
     }).meta({
       fetch: true
@@ -99,7 +99,7 @@ exports.updateUser = function(_user, next) {
   delete _user.password;
 
   var userFinder = _user.hasOwnProperty('id') ? {
-    _id: _user._id
+    id: _user.id
   } : {
     username: _user.username
   };
@@ -124,7 +124,7 @@ exports.updateUser = function(_user, next) {
     if (!!password) {
       sails.models.passport.findOne({
         protocol: 'local',
-        user: user._id
+        user: user.id
       }, function(err, passport) {
         passport.password = password;
         passport.save(function(err, passport) {
@@ -166,7 +166,7 @@ exports.connect = function(req, res, next) {
 
   Passport.findOne({
     protocol: 'local',
-    user: user._id
+    user: user.id
   }, function(err, passport) {
     if (err) {
       return next(err);
@@ -176,7 +176,7 @@ exports.connect = function(req, res, next) {
       Passport.create({
         protocol: 'local',
         password: password,
-        user: user._id
+        user: user.id
       }).meta({
         fetch: true
       }).exec(function(err, passport) {
@@ -228,7 +228,7 @@ exports.login = function(req, identifier, password, next) {
 
     sails.models.passport.findOne({
       protocol: 'local',
-      user: user._id
+      user: user.id
     }, function(err, passport) {
       if (passport) {
         Passport.validatePassword(password, passport.password, function(err, res) {

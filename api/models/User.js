@@ -3,15 +3,15 @@ var crypto = require('crypto');
 
 /** @module User */
 module.exports = {
-  primaryKey: '_id',
+  // primaryKey: '_id',
 
   attributes: {
 
-    _id: {
-      type: 'string',
-      unique: true,
-      columnName: '_id'
-    },
+    // _id: {
+    //   type: 'string',
+    //   unique: true,
+    //   columnName: '_id'
+    // },
 
     username: {
       type: 'string',
