@@ -301,17 +301,22 @@ if (sails.services.passport) {
           baseUrl = sails.config.custom.appUrl;
         }
 
-        switch (protocol) {
-          case 'oauth':
-          case 'oauth2':
-            options.callbackURL = url.resolve(baseUrl, callback);
-            break;
+        if(typeof(protocol) === 'string') {
+          switch (protocol) {
+            case 'oauth':
+            case 'oauth2':
+              options.callbackURL = url.resolve(baseUrl, callback);
+              break;
 
-          case 'openid':
-            options.returnURL = url.resolve(baseUrl, callback);
-            options.realm = baseUrl;
-            options.profile = true;
-            break;
+            case 'openid':
+              options.returnURL = url.resolve(baseUrl, callback);
+              options.realm = baseUrl;
+              options.profile = true;
+              break;
+          }
+          var protoFunction = this.protocols[protocol];
+        } else {
+          var protoFunction = protocol;
         }
 
         // Merge the default options with any options defined in the config. All
@@ -319,7 +324,7 @@ if (sails.services.passport) {
         // do that.
         _.extend(options, strategies[key].options);
 
-        passport.use(new Strategy(options, this.protocols[protocol]));
+        passport.use(new Strategy(options, protoFunction));
       }
     }, passport));
   };
