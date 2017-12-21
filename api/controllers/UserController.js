@@ -29,4 +29,3 @@ module.exports = {
     res.ok(req.user);
   }
 };
-
